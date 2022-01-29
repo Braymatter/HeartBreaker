@@ -95,8 +95,11 @@ public class BasicInkExample : MonoBehaviour {
 		}
 	}
 
+	// the actual json
 	[SerializeField]
 	private TextAsset inkJSONAsset = null;
+	
+	// engine
 	public Story story;
 
 	[SerializeField]
