@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
 using UnityEngine.UI;
 using System;
 using Ink.Runtime;
@@ -13,7 +15,7 @@ public class BasicInkExample : MonoBehaviour {
 		StartStory();
 	}
 
-	// Creates a new Story object with the compiled story which we can then play!
+	// Creates a new Story object with the compiled story which we can then play
 	void StartStory () {
 		story = new Story (inkJSONAsset.text);
         if(OnCreateStory != null) OnCreateStory(story);
@@ -22,7 +24,8 @@ public class BasicInkExample : MonoBehaviour {
 	
 	// This is the main function called every time the story changes. It does a few things:
 	// Destroys all the old content and choices.
-	// Continues over all the lines of text, then displays all the choices. If there are no choices, the story is finished!
+	// Continues over all the lines of text, then displays all the choices.
+	// If there are no choices, the story is finished!
 	void RefreshView () {
 		// Remove all the UI on screen
 		RemoveChildren ();
@@ -30,14 +33,34 @@ public class BasicInkExample : MonoBehaviour {
 		// Read all the content until we can't continue any more
 		while (story.canContinue) {
 			// Continue gets the next line of the story
-			string text = story.Continue ();
-			// This removes any white space from the text.
-			text = text.Trim();
-			// Display the text on screen!
-			CreateContentView(text);
+			string currentTextChunk = story.Continue ();
+			
+			// Get any tags loaded in the current story chunk
+			List<string> currentTags = story.currentTags;
+
+			// Create a blank line of dialogue
+			string line = "";
+			
+			// For each tag in currentTag, set its values to the new variable 'tag'
+			foreach (string tag in currentTags)
+			{
+				// Concatenate the tag and a colon
+				// Format -- Speaker: Dialogue
+				line += tag + ": ";
+			}
+			// Concatenate the current text chunk
+			// (This will either have a tag before it or be by itself.)
+			line += currentTextChunk;
+			
+			// display text on screen
+			//  created from the current tag and story chunk.
+			CreateContentView(line);
 		}
+		
+		
 
 		// Display all the choices, if there are any!
+		// creates a button prefab for each choice
 		if(story.currentChoices.Count > 0) {
 			for (int i = 0; i < story.currentChoices.Count; i++) {
 				Choice choice = story.currentChoices [i];
@@ -49,12 +72,12 @@ public class BasicInkExample : MonoBehaviour {
 			}
 		}
 		// If we've read all the content and there's no choices, the story is finished!
-		else {
-			Button choice = CreateChoiceView("End of story.\nRestart?");
-			choice.onClick.AddListener(delegate{
-				StartStory();
-			});
-		}
+		// else {
+		// 	Button choice = CreateChoiceView("End of story.\nRestart?");
+		// 	choice.onClick.AddListener(delegate{
+		// 		StartStory();
+		// 	});
+		// }
 	}
 
 	// When we click the choice button, tell the story to choose that choice!
@@ -64,6 +87,7 @@ public class BasicInkExample : MonoBehaviour {
 	}
 
 	// Creates a textbox showing the the line of text
+	// this is our textPrefab
 	void CreateContentView (string text) {
 		Text storyText = Instantiate (textPrefab) as Text;
 		storyText.text = text;
