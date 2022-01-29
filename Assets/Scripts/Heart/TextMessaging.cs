@@ -26,7 +26,7 @@ namespace Heart
 
         // messages need to process in a queue because we rely on their
         // positioning and sizing to layout future items
-        private List<Tuple<string, Speaker>> _pendingMessages = new();
+        private List<Tuple<string, Speaker, Action>> _pendingMessages = new();
         private List<Bubble> _sentMessages = new();
         private List<ReplyOption> _currentOptions = new();
         private HashSet<Bubble> _toRemove = new ();
@@ -34,35 +34,35 @@ namespace Heart
 
         private void Start()
         {
-            SetName("Mom");
-            
-            // make some text messages
-            StartCoroutine(WaitUntil(1, 
-                () => CreateTextMessage("Hello there", Speaker.Receiver)));
-
-            StartCoroutine(WaitUntil(2, 
-                () => CreateOptions(new List<string> {"Who are you?", "Hey", "😊"})));
-            
-            StartCoroutine(WaitUntil(5, 
-                () => CreateTextMessage("How are you doing tonight?", Speaker.Receiver)));
-            
-            StartCoroutine(WaitUntil(6, 
-                () => CreateTextMessage("I'm doing well, thank you.", Speaker.Sender)));
-            
-            StartCoroutine(WaitUntil(7, 
-                () => CreateTextMessage("OK good, just checking up on you. You never send me any texts or even call!", Speaker.Receiver)));
-            
-            StartCoroutine(WaitUntil(8, 
-                () => CreateTextMessage("Yeah I know. It's been busy. Lots happening at work, you know how it is.", Speaker.Sender)));
-            
-            StartCoroutine(WaitUntil(9, 
-                () => CreateTextMessage("You ought to visit soon, its been years.", Speaker.Receiver)));
-            
-            StartCoroutine(WaitUntil(10, 
-                () => CreateTextMessage("OK.", Speaker.Sender)));
-            
-            StartCoroutine(WaitUntil(11, 
-                () => CreateTextMessage("I'll try.", Speaker.Sender)));
+            // SetName("Mom");
+            //
+            // // make some text messages
+            // StartCoroutine(WaitUntil(1, 
+            //     () => CreateTextMessage("Hello there", Speaker.Receiver)));
+            //
+            // StartCoroutine(WaitUntil(2, 
+            //     () => CreateOptions(new List<string> {"Who are you?", "Hey", "😊"})));
+            //
+            // StartCoroutine(WaitUntil(5, 
+            //     () => CreateTextMessage("How are you doing tonight?", Speaker.Receiver)));
+            //
+            // StartCoroutine(WaitUntil(6, 
+            //     () => CreateTextMessage("I'm doing well, thank you.", Speaker.Sender)));
+            //
+            // StartCoroutine(WaitUntil(7, 
+            //     () => CreateTextMessage("OK good, just checking up on you. You never send me any texts or even call!", Speaker.Receiver)));
+            //
+            // StartCoroutine(WaitUntil(8, 
+            //     () => CreateTextMessage("Yeah I know. It's been busy. Lots happening at work, you know how it is.", Speaker.Sender)));
+            //
+            // StartCoroutine(WaitUntil(9, 
+            //     () => CreateTextMessage("You ought to visit soon, its been years.", Speaker.Receiver)));
+            //
+            // StartCoroutine(WaitUntil(10, 
+            //     () => CreateTextMessage("OK.", Speaker.Sender)));
+            //
+            // StartCoroutine(WaitUntil(11, 
+            //     () => CreateTextMessage("I'll try.", Speaker.Sender)));
             
         }
 
@@ -74,7 +74,7 @@ namespace Heart
                 if (_pendingMessages.Count > 0)
                 {
                     var message = _pendingMessages.First();
-                    var bubble = ProcessPendingMessage(message.Item1, message.Item2);
+                    var bubble = ProcessPendingMessage(message.Item1, message.Item2, message.Item3);
                     
                     _pendingMessages.Remove(message);
                     _sentMessages.Add(bubble);
@@ -102,7 +102,7 @@ namespace Heart
             return replyOption;
         }
 
-        private Bubble ProcessPendingMessage(string text, Speaker speaker)
+        private Bubble ProcessPendingMessage(string text, Speaker speaker, Action doAfter)
         {
             // message needs to render below others
             var yOffset = 10 + _sentMessages.Aggregate(0f, (acc, b) => Math.Max(acc, b.PositionY()));
@@ -117,13 +117,14 @@ namespace Heart
             bubble.speaker = speaker;
             bubble.offset = yOffset;
             bubble.moveFromOffset = messagingPanel.GetComponent<RectTransform>().rect.height;
+            bubble.doAfterComplete = doAfter;
 
             return bubble;
         }
 
-        private void CreateTextMessage(string text, Speaker speaker)
+        public void CreateTextMessage(string text, Speaker speaker, Action afterCreate)
         {
-            _pendingMessages.Add(new Tuple<string, Speaker>(text, speaker));
+            _pendingMessages.Add(new Tuple<string, Speaker, Action>(text, speaker, afterCreate));
         }
 
         // Occurs when a child bubble has finished being positioned
@@ -183,7 +184,7 @@ namespace Heart
             _isAnimating--;
         }
 
-        private void CreateOptions(List<string> options)
+        public void CreateOptions(List<ReplyAndAction> options)
         {
             if (options.Count == 0)
             {
@@ -197,11 +198,13 @@ namespace Heart
 
             var replies = options.Select(s =>
             {
-                return CreateReply(s,
+                return CreateReply(s.text,
                     (reply) =>
                     {
-                        CreateTextMessage(reply.text, Speaker.Sender);
+                        // CreateTextMessage(reply.text, Speaker.Sender);
+                        Debug.Log("user chose: " + s.text);
                         ClearReplies();
+                        s.action.Invoke();
                     });
             }).ToList();
 

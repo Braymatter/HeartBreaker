@@ -1,5 +1,5 @@
 // DEBUG SHORTCUTS - set false in release!
-VAR DEBUG = true
+VAR DEBUG = false
 {DEBUG:
 	IN DEBUG MODE!
 	who is calling?

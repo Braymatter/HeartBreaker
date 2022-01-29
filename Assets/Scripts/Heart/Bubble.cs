@@ -20,13 +20,16 @@ namespace Heart
 		private BubbleAnimation _animation = BubbleAnimation.New;
 		private float _maxWidth = 270f;
 		
+		// callback to happen after bubble is done
+		public Action doAfterComplete;
+		
 		// our parent text messaging interface -- we need to notify
 		// them when we finish adding a text so repositioning
 		// can occur
 		private TextMessaging _messaging;
 		
 		// length of animations
-		private float _animationTime = 0.25f;
+		private float _animationTime = 0.3f;
 
 		// Text to show
 		public string text;
@@ -150,7 +153,8 @@ namespace Heart
 						{
 							_isAnimating = false;
 							_animation = BubbleAnimation.Done;
-							_messaging.OnBubblePositioned(this);
+							_messaging.OnBubblePositioned(this); 
+							doAfterComplete?.Invoke();
 						}));
 						
 						break;
