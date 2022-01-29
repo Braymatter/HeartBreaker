@@ -1,7 +1,9 @@
-- I looked at Monsieur Fogg 
-*   ... and I could contain myself no longer.
-    'What is the purpose of our journey, Monsieur?'
-    'A wager,' he replied.
+- Hey
+- Call me
+- ...?
+- You there, babe?
+*   Sorry
+    - It's fine
     * *     'A wager!'[] I returned.
             He nodded. 
             * * *   'But surely that is foolishness!'
