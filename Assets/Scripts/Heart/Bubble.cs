@@ -18,7 +18,12 @@ namespace Heart
 		
 		private RectTransform _self;
 		private BubbleAnimation _animation = BubbleAnimation.New;
-		private float _maxWidth = 220f;
+		private float _maxWidth = 270f;
+		
+		// our parent text messaging interface -- we need to notify
+		// them when we finish adding a text so repositioning
+		// can occur
+		private TextMessaging _messaging;
 		
 		// length of animations
 		private float _animationTime = 0.25f;
@@ -42,6 +47,7 @@ namespace Heart
 		private void Start()
 		{
 			_self = gameObject.GetComponent<RectTransform>();
+			_messaging = gameObject.GetComponentInParent<TextMessaging>();
 			textMesh.text = text;
 			
 			if (speaker == Speaker.Receiver)
@@ -50,6 +56,7 @@ namespace Heart
 				_self.pivot = new Vector2(0, 1);
 				_self.anchorMin = new Vector2(0, 1);
 				_self.anchorMax = new Vector2(0, 1);
+				_self.localPosition += new Vector3(16, 0, 0);
 				imageMesh.rectTransform.pivot = new Vector2(0, 1);
 				imageMesh.rectTransform.anchorMin = new Vector2(0, 1);
 				imageMesh.rectTransform.anchorMax = new Vector2(0, 1);
@@ -63,6 +70,7 @@ namespace Heart
 				_self.pivot = new Vector2(1, 1);
 				_self.anchorMin = new Vector2(1, 1);
 				_self.anchorMax = new Vector2(1, 1);
+				_self.localPosition += new Vector3(-16, 0, 0);
 				imageMesh.rectTransform.pivot = new Vector2(1, 1);
 				imageMesh.rectTransform.anchorMin = new Vector2(1, 1);
 				imageMesh.rectTransform.anchorMax = new Vector2(1, 1);
@@ -135,10 +143,14 @@ namespace Heart
 					{
 						// Slide up into position
 						_isAnimating = true;
-						StartCoroutine(MoveTo(Time.deltaTime, () =>
+						StartCoroutine(MoveTo(
+							new Vector3(_self.localPosition.x, moveFromOffset - offset, _self.localPosition.z), 
+							_animationTime, 
+							() =>
 						{
 							_isAnimating = false;
 							_animation = BubbleAnimation.Done;
+							_messaging.OnBubblePositioned(this);
 						}));
 						
 						break;
@@ -165,11 +177,12 @@ namespace Heart
 			lambda.Invoke();
 		}
 
-		private IEnumerator MoveTo(float delta, Action onDone)
+		public IEnumerator MoveTo(Vector3 newPosition, float animationLength, Action onDone = null)
 		{
-			var time = _animationTime;
+			var delta = Time.deltaTime;
+			var time = animationLength;
 			var initialPosition = _self.localPosition;
-			var finalPosition = new Vector3(initialPosition.x, moveFromOffset - offset, initialPosition.z);
+			var finalPosition = newPosition;
 
 			while (time > 0)
 			{
@@ -183,7 +196,7 @@ namespace Heart
 
 			_self.localPosition = finalPosition;
 
-			onDone.Invoke();
+			onDone?.Invoke();
 		}
 		
 		private void Resize()
@@ -219,6 +232,35 @@ namespace Heart
 		private void SetMaxTextWidth(float width)
 		{
 			textMesh.rectTransform.sizeDelta = new Vector2(width, textMesh.rectTransform.sizeDelta.y);
+		}
+
+		public RectTransform GetRect()
+		{
+			return _self;
+		}
+
+		public float RenderedHeight()
+		{
+			// if height == 40...
+			// 966 - 800 => 40 - 166 => -126
+			// 820 - 800 => 40 - 20  => 20
+			// 780 - 800 => 40 -- 20 => 60
+			// if < 0; 0; else min(height, difference)
+
+			var height = padding.y + imageMesh.rectTransform.rect.height;
+			var yDiff = height - (_self.localPosition.y - moveFromOffset);
+			
+			if (yDiff <= 0)
+			{
+				return 0;
+			}
+
+			return Math.Min(height, yDiff);
+		}
+
+		public float PositionY()
+		{
+			return (moveFromOffset - _self.localPosition.y) + RenderedHeight();
 		}
 	}
 	
