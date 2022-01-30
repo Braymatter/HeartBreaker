@@ -21,9 +21,12 @@ public class BreakerController : MonoBehaviour
     private const String ABILITY_THREE = "AB3";
     private const String ABILITY_FOUR = "AB4";
 
-    public float maxTravelDistanceFromCenter = 10;
+    public float maxTravelDistanceFromCenter = 5;
     public float travelSpeedPerSecond = 5F;
-
+    private Vector3 _initialPaddlePosition;
+    
+    public GameObject paddleGameObject;
+    
     private Dictionary<String, KeyCode> StringKeyCodes = new Dictionary<string, KeyCode>()
     {
         {"A", KeyCode.A},
@@ -74,6 +77,21 @@ public class BreakerController : MonoBehaviour
             setPlayerPrefsForLayout();
         }
 
+        if (paddleGameObject == null)
+        {
+            Debug.Log("Paddle was null on awake, searching for Child with BreakerPaddle Component");
+            paddleGameObject = GetComponentInChildren<BreakerPaddle>().gameObject;
+
+            if (paddleGameObject == null)
+            {
+                Debug.LogError("Could not find Breaker Paddle in Child object of controller");
+            }
+            else
+            {
+                _initialPaddlePosition = paddleGameObject.transform.position;
+            }
+        }
+
     }
 
     public void Update()
@@ -83,14 +101,23 @@ public class BreakerController : MonoBehaviour
 
     private void HandlePlayerInputs()
     {
-        if (Input.GetKeyDown(StringKeyCodes[PlayerPrefs.GetString(PADDLE_LEFT)]))
+        float paddleTravelDistance = _initialPaddlePosition.x - paddleGameObject.transform.position.x;
+        if (Input.GetKey(StringKeyCodes[PlayerPrefs.GetString(PADDLE_LEFT)]))
         {
-            Debug.Log("Paddle Left: " + PADDLE_LEFT);
+            //If the paddle is not more than the max distance from it's initial position on object awake 
+            if (paddleTravelDistance < maxTravelDistanceFromCenter)
+            {
+                paddleGameObject.transform.Translate(-travelSpeedPerSecond * Time.deltaTime,0, 0);
+            }
         }
 
-        if (Input.GetKeyDown(StringKeyCodes[PlayerPrefs.GetString(PADDLE_RIGHT)]))
-        {
-            Debug.Log("Paddle Right:" + PADDLE_RIGHT);
+        if (Input.GetKey(StringKeyCodes[PlayerPrefs.GetString(PADDLE_RIGHT)]))
+        { 
+            //If the paddle is not more than the max distance from it's initial position on object awake 
+            if (paddleTravelDistance > -maxTravelDistanceFromCenter)
+            {
+                paddleGameObject.transform.Translate(travelSpeedPerSecond * Time.deltaTime,0, 0);
+            }
         }
 
         if (Input.GetKeyDown(StringKeyCodes[PlayerPrefs.GetString(LAUNCH_BALL)]))
