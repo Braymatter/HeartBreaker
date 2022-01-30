@@ -34,7 +34,6 @@ You need to go see her. #Dad
         You know her. She's old-fashioned. #Dad
         None of that matter anymore #Dad
         All that crap between you two isn't going to mean anything when she's gone, you know? #Dad
-        -> DONE
     * (pos2) {pos1} How long[?] does she have? #Player
         A month? Weeks? You never know these things #Dad
         I know you've had your differences. #Dad
@@ -48,13 +47,16 @@ You need to go see her. #Dad
     * (negA) {not neg1} [. . .] #Player // effective neutral for positive route
         Come on. #Dad
 - ? #Dad
-* {pos2} I'll try[] but I don't owe her anything. She says ANYTHING and I'm out #Player
+    * {pos2} I'll try[] but I don't owe her anything. She says ANYTHING and I'm out #Player
         I get it #Dad
         thanks. #Dad
-* {neg2} What about me?[] Look. I don't owe her anything. you think its for my benefit? you just want to let her go with a clean conscience #Player
-* {(pos1 or posA) and (neg1 or negA)} I'll think about it[], ok? NO promises #Player
+    * {neg2} What about me?[] Look. I don't owe her anything. you think its for my benefit? you just want to let her go with a clean conscience #Player
+    * {(pos1 or posA) and (neg1 or negA)} I'll think about it[], ok? NO promises #Player
         thanks #Dad
-* {posA or negA} bye
+    * bye #Player
+        .... #Dad
+        Bye. #Dad
+        
 - -> DONE
     
     
@@ -83,7 +85,6 @@ You need to go see her. #Dad
         booooooo #Kevin
         boooooooooooo #Kevin
         fine :< #Kevin
-        -> DONE
     * (pos2) {pos1} [I guess]Yea, sure. I guess I can. You DO owe me #Player
         YOU #Kevin
         ARE #Kevin
@@ -100,13 +101,14 @@ You need to go see her. #Dad
         sorry to hear it #Kevin
     * (negA) {not neg1} [. . .] #Player
 - sry! #Kevin
-* {pos2} [No worries] lol no worries #Player
-* {neg2} talk to you later #Player
+    * {pos2} [No worries] lol no worries #Player
+    * {neg2} talk to you later #Player
         peace #Kevin
-* {(pos1 or posA) and (neg1 or negA)} [. . .] #Player
+    * {(pos1 or posA) and (neg1 or negA)} [. . .] #Player
         point taken #Kevin
         ttyl #Kevin
-* {posA or negA} g2g #Player
+    * g2g #Player
+        peace, bruh #Kevin
 - -> DONE
 
 
@@ -128,7 +130,6 @@ You need to go see her. #Dad
     * [Not now] I don't really wanna deal with it rn #Player
         I don't really think 'later' is an option anymore, babe #Hon
         but its your call #Hon
-        -> DONE
     * (pos2) {pos1} [It's a mess] I don't even know what I would say. Its a mess. #Player
         Yea... I get that <3 #Hon
         Just do your best, ok? I'm right here whatever you decide #Hon
@@ -141,17 +142,18 @@ You need to go see her. #Dad
     * (negA) {not neg1} I can't do this #Player
         no one's making you decide right away. take your time #Hon
 - omw home btw #Hon
-* {pos2} [Thanks] I could really use your help, thanks #Player
+    * {pos2} [Thanks] I could really use your help, thanks #Player
     np np I'm just glad we can figure this out together #Hon
     see you soon ok? #Hon
-* {neg2} [Tomorrow] we can talk about it tomorrow #Player
+    * {neg2} [Tomorrow] we can talk about it tomorrow #Player
     you said that yesterday...  #Hon
     we gotta figure this out soon, bae #Hon
     see you soon #Hon
-* {(pos1 or posA) and (neg1 or negA)} [we'll talk later] we can talk when you're home I GUESS #Player
+    * {(pos1 or posA) and (neg1 or negA)} [we'll talk later] we can talk when you're home I GUESS #Player
     so generous <3 #Hon
     and we had better! #Hon
-* {posA or negA} bring coffee #Player
+    * bring coffee #Player
     on it!  #Hon
+    but this isnt over!! #Hon
 - -> DONE
 
