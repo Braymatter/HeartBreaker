@@ -15,7 +15,7 @@ VAR DEBUG = false
 
 
 === dad ===
-- (round1) You there? #Dad
+- You there? #Dad
 Sorry if this is a bad time. #Dad
 call me #Dad
     * [. . .] #Player
@@ -27,7 +27,7 @@ call me #Dad
     * (neg1) kinda busy[] #Player
         talk later, k? #Player
         Seriously? #Dad
-- (round2) This can't really wait another day #Dad
+- This can't really wait another day #Dad
 You need to go see her. #Dad
     * I'm good #Player
         Look, I know you've had your differences #Dad
@@ -47,7 +47,7 @@ You need to go see her. #Dad
         lets talk #Dad
     * (negA) {not neg1} [. . .] #Player // effective neutral for positive route
         Come on. #Dad
-- (round3) 
+- ? #Dad
 * {pos2} I'll try[] but I don't owe her anything. She says ANYTHING and I'm out #Player
         I get it #Dad
         thanks. #Dad
@@ -59,7 +59,7 @@ You need to go see her. #Dad
     
     
 === kevin ===
-- (round1) YO #Kevin
+- YO #Kevin
     * Um? #Player
         lol #Kevin
         hey man can you take my shift for Friday? #Kevin
@@ -77,7 +77,7 @@ You need to go see her. #Dad
         I'll trade your Thursday for my Friday #Kevin
         and bring you coffee #Kevin
         plzzzz #Kevin
-- (round2) Bruh #Kevin
+- Bruh #Kevin
     * Nope #Player
         boo #Kevin
         booooooo #Kevin
@@ -99,7 +99,7 @@ You need to go see her. #Dad
         yea i heard about ur mom #Kevin
         sorry to hear it #Kevin
     * (negA) {not neg1} [. . .] #Player
-- (round3) 
+- sry! #Kevin
 * {pos2} [No worries] lol no worries #Player
 * {neg2} talk to you later #Player
         peace #Kevin
@@ -111,33 +111,47 @@ You need to go see her. #Dad
 
 
 === hon ===
-- (round1) 🥰 #Hon
+- <3 :) #Hon
     * Hey #Player
-        Hey 🙃 #Hon
+        Hey :V #Hon
         Your dad called trying get a hold of u  #Hon
         call him back #Hon
         or dont. idc~  #Hon
-    *(pos1) ❤️🔥 #Player
-        ooOOoo FLAMES. Edgy. #Hon
+    *(pos1) <3 uwu #Player
+        such a dork lol #Hon
         XD hey ur dad called btw #Hon
         sounds important? Think its ur mom...? #Hon
     *(neg1) >_> #Player
-        rude 💔 #Hon
+        rude </3 #Hon
         oh and your dad called
-- (round2) Round 2
+- <3? #Hon
     * [Not now] I don't really wanna deal with it rn #Player
         I don't really think 'later' is an option anymore, babe #Hon
         but its your call #Hon
         -> DONE
     * (pos2) {pos1} [It's a mess] I don't even know what I would say. Its a mess. #Player
-        Yea... I get that ❤️#Player
-    * (neg2) {neg1} neg2
-    * (posA) {not pos1} posa
-    * (negA) {not neg1} 
-- (round3) 
-* {pos2} pos3
-* {neg2} neg3
-* {(pos1 or posA) and (neg1 or negA)} trueNeutral
-* {posA or negA} bye
+        Yea... I get that <3 #Hon
+        Just do your best, ok? I'm right here whatever you decide #Hon
+    * (neg2) {neg1} its not my problem #Player
+        I dont think you really believe that #Hon
+        calling them might do you some good #Hon
+    * (posA) {not pos1} Can you handle it? #Player
+        I can talk to your dad but... #Hon
+        I think your answer is better coming from YOU <3 #Hon
+    * (negA) {not neg1} I can't do this #Player
+        no one's making you decide right away. take your time #Hon
+- omw home btw #Hon
+* {pos2} [Thanks] I could really use your help, thanks #Player
+    np np I'm just glad we can figure this out together #Hon
+    see you soon ok? #Hon
+* {neg2} [Tomorrow] we can talk about it tomorrow #Player
+    you said that yesterday...  #Hon
+    we gotta figure this out soon, bae #Hon
+    see you soon #Hon
+* {(pos1 or posA) and (neg1 or negA)} [we'll talk later] we can talk when you're home I GUESS #Player
+    so generous <3 #Hon
+    and we had better! #Hon
+* {posA or negA} bring coffee #Player
+    on it!  #Hon
 - -> DONE
 
