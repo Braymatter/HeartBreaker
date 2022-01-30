@@ -626,7 +626,7 @@ MonoBehaviour:
   breakerCameraPosition: {fileID: 1709718733}
   smsCameraPosition: {fileID: 574940804}
   breakerGame: {fileID: 1751667502}
-  smsGame: {fileID: 0}
+  smsGame: {fileID: 1870839433}
   player: {fileID: 330585549}
 --- !u!1 &569798679
 GameObject:
@@ -2012,12 +2012,12 @@ PrefabInstance:
     - target: {fileID: 7693586314080087370, guid: c341cffea58e747599a6ca218e363573,
         type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.7071068
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7693586314080087370, guid: c341cffea58e747599a6ca218e363573,
         type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0.7071068
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7693586314080087370, guid: c341cffea58e747599a6ca218e363573,
         type: 3}
@@ -2042,7 +2042,7 @@ PrefabInstance:
     - target: {fileID: 7693586314080087370, guid: c341cffea58e747599a6ca218e363573,
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
-      value: 90
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7693586314080087370, guid: c341cffea58e747599a6ca218e363573,
         type: 3}
@@ -2073,6 +2073,18 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 1590717571}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1870839433 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 562303763312792994, guid: c341cffea58e747599a6ca218e363573,
+    type: 3}
+  m_PrefabInstance: {fileID: 1849186974}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0378d7ade53284126b46b69f084fa58c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &1952418894
 PrefabInstance:
   m_ObjectHideFlags: 0

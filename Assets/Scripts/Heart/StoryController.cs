@@ -14,15 +14,39 @@ public class StoryController : MonoBehaviour
     
     // the phone text messaging system to interface to
     public TextMessaging messagingInterface;
+    private GameManager _gameManager;
     
     private Story story;
+    private bool _isGameInProgress = false;
 
     private void Start()
     {
-        story = new Story (inkJSONAsset.text);
-        RefreshView();
+        _gameManager = FindObjectOfType (typeof (GameManager)) as GameManager;
     }
-    
+
+    public void Play()
+    {
+        if (!_isGameInProgress)
+        {
+            NewGame();
+        }
+    }
+
+    public void NewGame()
+    {
+        if (story == null)
+        {
+            story = new Story (inkJSONAsset.text);
+        }
+        else
+        {
+            story.ResetState();
+        }
+        
+        RefreshView();
+        _isGameInProgress = true;
+    }
+
     private void RefreshView()
     {
         if (story.canContinue)
@@ -102,7 +126,11 @@ public class StoryController : MonoBehaviour
         {
             messagingInterface.CreateTextMessage(text, Speaker.Sender, () =>
             {
-                RefreshView();
+                StartCoroutine(WaitUntil(3, () =>
+                {
+                    RefreshView();
+                    _gameManager.SwitchToBreaker("");
+                }));
             }); 
         }
         else

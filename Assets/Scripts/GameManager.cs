@@ -7,8 +7,6 @@ using UnityEngine.Video;
 
 public class GameManager : MonoBehaviour
 {
-    public Camera mainCamera;
-
     public AudioSource breakerMusic;
 
     public AudioSource introMusic;
@@ -17,18 +15,23 @@ public class GameManager : MonoBehaviour
     public Transform smsCameraPosition;
 
     public GameObject breakerGame;
-    public GameObject smsGame;
+    public StoryController smsGame;
     public VideoPlayer player;
     void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
         Debug.Log("Scene Loaded!");
         breakerGame.SetActive(true);
+
+        smsGame.NewGame();
         
+        Test();
     }
     
-    public void SwitchToSMS(bool didWin, String levelName)
+    public void SwitchToSMS()
     {
-        
+        Debug.Log("Switching to SMS");
+        //smsGame.Play();
+        SwitchToSMSView();
     }
 
     public void SwitchToBreaker(String levelName)
@@ -37,6 +40,7 @@ public class GameManager : MonoBehaviour
         breakerMusic.time = 0;
         breakerMusic.Play();
         breakerGame.GetComponent<BreakerController>().BeginNewGame(levelName);
+        SwitchToBreakerView();
     }
 
     private void OnEnable()
@@ -66,10 +70,27 @@ public class GameManager : MonoBehaviour
     void SwitchToBreakerView()
     {
         // move camera for breaker
+        Camera.main.transform.position = breakerCameraPosition.position;
+        Camera.main.orthographic = false;
+        Camera.main.fieldOfView = 60;
     }
 
     void SwitchToSMSView()
     {
         // move camera for sms
+        Camera.main.transform.position = smsCameraPosition.position;
+        Camera.main.orthographic = true;
+        Camera.main.orthographicSize = 50;
+    }
+
+    private void Test()
+    {
+        StartCoroutine(WaitUntil(20, SwitchToSMS));
+    }
+    
+    private IEnumerator WaitUntil(float seconds, Action lambda)
+    {
+        yield return new WaitForSeconds(seconds);
+        lambda.Invoke();
     }
 }
