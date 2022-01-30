@@ -38,6 +38,16 @@ public class BreakerBall : MonoBehaviour
         }
     }
 
+    private void OnCollisionExit(Collision other)
+    {
+        var escapeMarker = other.gameObject.GetComponent<EscapeColliderMarker>();
+        if (escapeMarker != null)
+        {
+            Debug.Log("Ball Escaped");
+            ResetBall();
+        }
+    }
+
     void ResetBall()
     {
         this.direction = new Vector3(1, 1, 0);
