@@ -1,9 +1,11 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Heart;
 using Ink.Runtime;
 using UnityEngine;
+using Random = System.Random;
 
 public class StoryController : MonoBehaviour
 {
@@ -32,16 +34,26 @@ public class StoryController : MonoBehaviour
             // Create a blank line of dialogue
             string line = "";
             string speaker = currentTags.FirstOrDefault();
+
+            // Concatenate the current text chunk
+            line += currentTextChunk;
+
+            var waitTime = 0f;
+            if (speaker != "Player")
+            {
+                waitTime = UnityEngine.Random.Range(3f, 6f);
+            }
             
             if (speaker != null && speaker != "Player")
             {
                 messagingInterface.SetName(speaker);
+                messagingInterface.SetTyping(true);
             }
             
-            // Concatenate the current text chunk
-            line += currentTextChunk;
-            
-            CreateContentView(speaker, line);
+            StartCoroutine(WaitUntil(waitTime, () =>
+            {
+                CreateContentView(speaker, line);
+            }));
         } 
         else
         {
@@ -73,6 +85,12 @@ public class StoryController : MonoBehaviour
         }
     }
 
+    private IEnumerator WaitUntil(float seconds, Action lambda)
+    {
+        yield return new WaitForSeconds(seconds);
+        lambda.Invoke();
+    }
+    
     void CreateContentView (string speaker, string text) {
         // skip the scene on "..."
         if (text.Trim() == "")
@@ -82,11 +100,19 @@ public class StoryController : MonoBehaviour
         
         if (speaker == "Player")
         {
-            messagingInterface.CreateTextMessage(text, Speaker.Sender, RefreshView); 
+            messagingInterface.CreateTextMessage(text, Speaker.Sender, () =>
+            {
+                RefreshView();
+            }); 
         }
         else
         {
-            messagingInterface.CreateTextMessage(text, Speaker.Receiver, RefreshView);   
+            messagingInterface.CreateTextMessage(text, Speaker.Receiver, () =>
+            {
+                messagingInterface.SetTyping(false);
+                RefreshView();
+                EventManager.TriggerEvent("NewTextMessage");
+            });   
         }
     }
 }

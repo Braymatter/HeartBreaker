@@ -30,6 +30,7 @@ namespace Heart
 
 		public void OnButtonPress()
 		{
+			Debug.Log("ClickED!");
 			clickCallback?.Invoke(this);
 		}
 

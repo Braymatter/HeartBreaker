@@ -23,6 +23,7 @@ namespace Heart
         
         // the text field with the recipient's name
         public TextMeshProUGUI textMesh;
+        public TextMeshProUGUI typingIndicator;
 
         // messages need to process in a queue because we rely on their
         // positioning and sizing to layout future items
@@ -30,6 +31,7 @@ namespace Heart
         private List<Bubble> _sentMessages = new();
         private List<ReplyOption> _currentOptions = new();
         private HashSet<Bubble> _toRemove = new ();
+        private bool _isTyping = false;
         private int _isAnimating = 0;
 
         private void Start()
@@ -84,6 +86,15 @@ namespace Heart
                 {
                     CleanUp();
                 }
+            }
+
+            if (_isTyping)
+            {
+                typingIndicator.alpha = 1;
+            }
+            else
+            {
+                typingIndicator.alpha = 0;
             }
         }
         
@@ -264,6 +275,11 @@ namespace Heart
         public void SetName(string recipientName)
         {
             textMesh.text = recipientName;
+        }
+
+        public void SetTyping(bool isTyping)
+        {
+            _isTyping = isTyping;
         }
     }
 }
