@@ -21,12 +21,6 @@ public class BreakerController : MonoBehaviour
     private const String ABILITY_THREE = "AB3";
     private const String ABILITY_FOUR = "AB4";
 
-    public float maxTravelDistanceFromCenter = 5;
-    public float travelSpeedPerSecond = 5F;
-    private Vector3 _initialPaddlePosition;
-    
-    public GameObject paddleGameObject;
-    
     private Dictionary<String, KeyCode> StringKeyCodes = new Dictionary<string, KeyCode>()
     {
         {"A", KeyCode.A},
@@ -38,6 +32,23 @@ public class BreakerController : MonoBehaviour
         {"3", KeyCode.Alpha3},
         {"4", KeyCode.Alpha4}
     };
+    
+    public float maxTravelDistanceFromCenter = 5;
+    public float travelSpeedPerSecond = 5F;
+    private Vector3 _initialPaddlePosition;
+    
+    public GameObject paddleGameObject;
+    public GameManager gameManager;
+    public BrickField brickField;
+    public AudioClip VictorySound;
+    public AudioSource SoundPlayer;
+    
+    private String controllerState = "Pre-Play";
+    private const String PRE_PLAY = "PREPLAY";
+    private const String PLAYING = "PLAYING";
+    private const String WON = "WINNING";
+    private const String LOST = "LOSING";
+    
     
     private void setPlayerPrefsForLayout()
     {
@@ -77,6 +88,15 @@ public class BreakerController : MonoBehaviour
             setPlayerPrefsForLayout();
         }
 
+        if (gameManager == null)
+        {
+            gameManager = GameObject.FindObjectOfType<GameManager>();
+            if (gameManager == null)
+            {
+                Debug.LogError("BreakerController Could not find Game Manager");
+            }
+        }
+        
         if (paddleGameObject == null)
         {
             Debug.Log("Paddle was null on awake, searching for Child with BreakerPaddle Component");
@@ -92,11 +112,36 @@ public class BreakerController : MonoBehaviour
             }
         }
 
+        if (brickField == null)
+        {
+            brickField = GetComponentInChildren<BrickField>();
+            if (brickField == null)
+            {
+                Debug.Log("Breaker Controller could not find BrickField as component in children");
+            }
+        }
+
+        if (SoundPlayer == null)
+        {
+            SoundPlayer = GetComponent<AudioSource>();
+            if (SoundPlayer == null)
+            {
+                Debug.LogError("Breaker Controller could not find AudioSource as component in children");
+            }
+        }
+
+        VictorySound = Resources.Load<AudioClip>("Audio/Victory!");
+        if (VictorySound == null)
+        {
+            Debug.Log("BreakerController could not find VictorySound");
+        }
     }
 
     public void Update()
     {
         HandlePlayerInputs();
+
+        HandleGameState();
     }
 
     private void HandlePlayerInputs()
@@ -105,13 +150,13 @@ public class BreakerController : MonoBehaviour
         if (Input.GetKey(StringKeyCodes[PlayerPrefs.GetString(PADDLE_LEFT)]))
         {
             //If the paddle is not more than the max distance from it's initial position on object awake 
-            if (paddleTravelDistance < maxTravelDistanceFromCenter)
+            if (paddleTravelDistance < maxTravelDistanceFromCenter && this.controllerState != WON)
             {
                 paddleGameObject.transform.Translate(-travelSpeedPerSecond * Time.deltaTime,0, 0);
             }
         }
 
-        if (Input.GetKey(StringKeyCodes[PlayerPrefs.GetString(PADDLE_RIGHT)]))
+        if (Input.GetKey(StringKeyCodes[PlayerPrefs.GetString(PADDLE_RIGHT)]) && this.controllerState != WON)
         { 
             //If the paddle is not more than the max distance from it's initial position on object awake 
             if (paddleTravelDistance > -maxTravelDistanceFromCenter)
@@ -126,5 +171,53 @@ public class BreakerController : MonoBehaviour
         }
         
         //Add Abilities here
+    }
+
+    public void BeginNewGame(String level)
+    {
+        brickField.levelName = level;
+        brickField.SpawnField();
+        controllerState = PLAYING;
+    }
+    public void HandleGameState()
+    {
+        if (brickField == null)
+        {
+            Debug.Log("Could not find BrickField Component");
+        }
+        else
+        {
+            if (brickField.IsEmpty() && this.controllerState == PLAYING)
+            {
+                this.controllerState = WON;
+                if (VictorySound != null)
+                {
+                    SoundPlayer.clip = VictorySound;
+                    SoundPlayer.time = 0;
+                    SoundPlayer.Play();
+                }
+
+                BreakerBall ball = GetComponentInChildren<BreakerBall>();
+                ball.WinState();
+                paddleGameObject.GetComponent<BreakerPaddle>().transform.position = _initialPaddlePosition;
+            }
+        }
+    }
+
+    public void OnGateHit()
+    {
+        BreakerBall ball = GetComponentInChildren<BreakerBall>();
+        ball.ResetBall();
+        paddleGameObject.transform.position = _initialPaddlePosition;
+
+        AudioClip lossSound = Resources.Load<AudioClip>("Audio/FX031");
+        if (lossSound != null)
+        {
+            SoundPlayer.clip = lossSound;
+            SoundPlayer.time = 0;
+            SoundPlayer.Play();
+        }
+        
+        BeginNewGame(this.brickField.levelName);
     }
 }

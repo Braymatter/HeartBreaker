@@ -18,8 +18,6 @@ public class BreakerBall : MonoBehaviour
         _isColliding = true;
 
         GetComponentInChildren<RotateOverTime>().Randomize();
-        Debug.Log("Bouncing");
-        
         //Redirect Velocity
         direction = Vector3.Reflect(direction, other.contacts[0].normal);
         
@@ -35,6 +33,7 @@ public class BreakerBall : MonoBehaviour
         {
             breakerGate.OnBallHit();
             ResetBall();
+            GetComponentInParent<BreakerController>().OnGateHit();
         }
     }
 
@@ -48,12 +47,18 @@ public class BreakerBall : MonoBehaviour
         }
     }
 
-    void ResetBall()
+    public void ResetBall()
     {
         this.direction = new Vector3(1, 1, 0);
         this.transform.position = _initialPosition;
     }
 
+    public void WinState()
+    {
+        this.direction = Vector3.zero;
+        this.transform.position = _initialPosition;
+    }
+    
     void Start()
     {
         this._rigidbody = GetComponent<Rigidbody>();

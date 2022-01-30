@@ -36,6 +36,7 @@ public class GameManager : MonoBehaviour
         breakerMusic.playOnAwake = false;
         breakerMusic.time = 0;
         breakerMusic.Play();
+        breakerGame.GetComponent<BreakerController>().BeginNewGame(levelName);
     }
 
     private void OnEnable()
@@ -48,7 +49,7 @@ public class GameManager : MonoBehaviour
     {
         player.url = System.IO.Path.Combine (Application.streamingAssetsPath,"Spacey BG.mp4");
         player.Play();
-        SwitchToBreaker("TrapBrickLevel");
+        SwitchToBreaker("EasyLevel");
     }
 
     private void OnDisable()

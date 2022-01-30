@@ -1,11 +1,12 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
 public class BrickField : MonoBehaviour
 {
-    private List<List<GameObject>> FieldData;
+    private List<GameObject> FieldData;
 
     public String levelName;
     
@@ -23,16 +24,15 @@ public class BrickField : MonoBehaviour
     }
     
     //String is a csv 
-    public List<List<GameObject>> SpawnBrickFieldFromData(String data)
+    public List<GameObject> SpawnBrickFieldFromData(String data)
     {
         var rows = data.Split(Environment.NewLine);
-        var bricks = new List<List<GameObject>>();
+        var bricks = new List<GameObject>();
 
 
         for (var y = 0; y < rows.Length; y++)
         {
             var columns = rows[y].Split(",");
-            bricks.Add(new List<GameObject>(columns.Length));
             for (var x = 0; x < columns.Length; x++)
             {
                 //Generate the brick from the data here
@@ -61,7 +61,12 @@ public class BrickField : MonoBehaviour
                     {
                         var newBrickPrefab = (GameObject) Instantiate(Resources.Load(path), transform);
                         newBrickPrefab.transform.Translate(new Vector3(brickSize.x * x, brickSize.y * -y, 0 ));
-                        bricks[y].Add(newBrickPrefab);
+                        bricks.Add(newBrickPrefab);
+
+                        BreakerBrick brick = newBrickPrefab.GetComponent<BreakerBrick>();
+                        brick.parent = this;
+                        brick.FieldPosition = new Vector2(y, x);
+
                     }
                 }
             }
@@ -75,22 +80,43 @@ public class BrickField : MonoBehaviour
     {
         if (FieldData != null)
         {
-            foreach (var row in FieldData)
+            foreach (var go in FieldData)
             {
-                foreach (var go in row)
+                if (go != null)
                 {
-                    if (go != null)
-                    {
-                        Destroy(go);
-                    }
+                    Destroy(go);
                 }
             }
         }
     }
+
+    public void DeleteBrick(BreakerBrick brick)
+    {
+        Destroy(brick.gameObject);
+        var removed = FieldData.Remove(brick.gameObject);
+        if (!removed)
+        {
+            Debug.Log("Could Not Remove Brick from BrickField FieldData");
+        }
+        brick = null;
+    }
     
+    public bool IsEmpty()
+    {
+        var isEmpty = true;
+
+        if (FieldData != null)
+        {
+            if (FieldData.Any(brick => brick != null))
+            {
+                isEmpty = false;
+            }
+        }
+        return isEmpty;
+    }
     // Start is called before the first frame update
     [Button("Reload")]
-    void Start()
+    public void SpawnField()
     {
         ClearField();
         FieldData = SpawnBrickFieldFromData(LoadFieldDataFromFile(levelName));

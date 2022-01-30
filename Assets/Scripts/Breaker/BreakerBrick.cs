@@ -5,20 +5,13 @@ using UnityEngine;
 [SelectionBase]
 public class BreakerBrick : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
+    public Vector2 FieldPosition;
+    public BrickField parent;
     public void OnBallHit(Collision thisBrick)
     {
-        Destroy(this.gameObject);
+        if (parent != null)
+        {
+            parent.DeleteBrick(this);
+        }
     }
 }
