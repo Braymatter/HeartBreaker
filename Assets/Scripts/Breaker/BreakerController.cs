@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Sirenix.OdinInspector;
 using Sirenix.Serialization;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class BreakerController : MonoBehaviour
 {
@@ -41,6 +42,7 @@ public class BreakerController : MonoBehaviour
     public GameManager gameManager;
     public BrickField brickField;
     public AudioClip VictorySound;
+    public AudioClip BrokeBrickSound;
     public AudioSource SoundPlayer;
     
     private String controllerState = "Pre-Play";
@@ -48,7 +50,6 @@ public class BreakerController : MonoBehaviour
     private const String PLAYING = "PLAYING";
     private const String WON = "WINNING";
     private const String LOST = "LOSING";
-    
     
     private void setPlayerPrefsForLayout()
     {
@@ -135,6 +136,13 @@ public class BreakerController : MonoBehaviour
         {
             Debug.Log("BreakerController could not find VictorySound");
         }
+
+        BrokeBrickSound = Resources.Load<AudioClip>("Audio/coin");
+        if (BrokeBrickSound == null)
+        {
+            Debug.Log("BreakerController Could not find BrokenBrickSound");
+        }
+        
     }
 
     public void Update()
@@ -204,6 +212,17 @@ public class BreakerController : MonoBehaviour
         }
     }
 
+    public void OnBrickDestroy()
+    {
+        if (BrokeBrickSound != null)
+        {
+            SoundPlayer.clip = BrokeBrickSound;
+            SoundPlayer.time = 0;
+            SoundPlayer.pitch = 1 + Random.Range(-0.2F, 0.2F);
+            SoundPlayer.Play();
+            SoundPlayer.pitch = 1;
+        }
+    }
     public void OnGateHit()
     {
         BreakerBall ball = GetComponentInChildren<BreakerBall>();

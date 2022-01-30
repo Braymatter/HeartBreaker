@@ -49,7 +49,7 @@ public class GameManager : MonoBehaviour
     {
         player.url = System.IO.Path.Combine (Application.streamingAssetsPath,"Spacey BG.mp4");
         player.Play();
-        SwitchToBreaker("EasyLevel");
+        SwitchToBreaker("DemoLevel");
     }
 
     private void OnDisable()

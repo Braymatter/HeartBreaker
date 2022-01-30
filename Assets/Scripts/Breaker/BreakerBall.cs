@@ -18,14 +18,13 @@ public class BreakerBall : MonoBehaviour
         _isColliding = true;
 
         GetComponentInChildren<RotateOverTime>().Randomize();
-        //Redirect Velocity
-        direction = Vector3.Reflect(direction, other.contacts[0].normal);
-        
+
         //Handle Brick Collision
         var collidedBrick = other.gameObject.GetComponent<BreakerBrick>();
         if (collidedBrick != null)
         {
             collidedBrick.OnBallHit(other);
+            GetComponentInParent<BreakerController>().OnBrickDestroy();
         }
 
         var breakerGate = other.gameObject.GetComponent<BreakerGate>();
@@ -35,6 +34,15 @@ public class BreakerBall : MonoBehaviour
             ResetBall();
             GetComponentInParent<BreakerController>().OnGateHit();
         }
+
+        var breakerPaddle = other.gameObject.GetComponent<BreakerPaddle>();
+        if (breakerPaddle != null)
+        {
+            direction += new Vector3(breakerPaddle.DirectionModifier.x, breakerPaddle.DirectionModifier.y, 0F);
+        }
+        
+        //Redirect Velocity
+        direction = Vector3.Reflect(direction, other.contacts[0].normal).normalized;
     }
 
     private void OnCollisionExit(Collision other)
@@ -49,7 +57,7 @@ public class BreakerBall : MonoBehaviour
 
     public void ResetBall()
     {
-        this.direction = new Vector3(1, 1, 0);
+        this.direction = new Vector3(0, 1, 0);
         this.transform.position = _initialPosition;
     }
 
@@ -62,7 +70,7 @@ public class BreakerBall : MonoBehaviour
     void Start()
     {
         this._rigidbody = GetComponent<Rigidbody>();
-        this.direction= new Vector3(1, 1, 0).normalized;
+        this.direction= new Vector3(0, 1, 0).normalized;
         this._initialPosition = this.transform.position;
     }
 
@@ -72,11 +80,5 @@ public class BreakerBall : MonoBehaviour
         _isColliding = false;
         var translationVector = new Vector3(direction.x, direction.y, 0) * Time.deltaTime * speed;
         transform.Translate(translationVector);
-    }
-
-    private void FixedUpdate()
-    {
-
-        //_rigidbody.MovePosition(translationVector);
     }
 }
