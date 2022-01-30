@@ -65,11 +65,11 @@ public class GameManager : MonoBehaviour
 
     void SwitchToBreakerView()
     {
-        
+        // move camera for breaker
     }
 
     void SwitchToSMSView()
     {
-        
+        // move camera for sms
     }
 }

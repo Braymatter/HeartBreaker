@@ -12,7 +12,7 @@ public class Notifications : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        _group = gameObject.GetComponent<CanvasGroup>();
+        _group = gameObject.GetComponentInChildren<CanvasGroup>();
         _group.alpha = 0;
     }
 

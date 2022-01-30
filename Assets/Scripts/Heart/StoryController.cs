@@ -41,7 +41,7 @@ public class StoryController : MonoBehaviour
             var waitTime = 0f;
             if (speaker != "Player")
             {
-                waitTime = UnityEngine.Random.Range(3f, 6f);
+                waitTime = UnityEngine.Random.Range(10f, 14f);
             }
             
             if (speaker != null && speaker != "Player")
