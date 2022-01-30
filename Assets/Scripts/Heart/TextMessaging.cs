@@ -141,7 +141,7 @@ namespace Heart
         // Occurs when a child bubble has finished being positioned
         public void OnBubblePositioned(Bubble bubble)
         {
-            var distFromBottom = bubble.GetRect().localPosition.y - bubble.imageMesh.rectTransform.sizeDelta.y;
+            var distFromBottom = bubble.GetRect().localPosition.y - bubble.GetImageRectTransform().sizeDelta.y;
 
             // Need to reposition elements because we overflowed
             if (distFromBottom <= 0)

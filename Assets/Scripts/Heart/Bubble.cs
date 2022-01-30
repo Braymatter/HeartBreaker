@@ -10,7 +10,12 @@ namespace Heart
 	{
 		// Thing we draw on
 		public TextMeshProUGUI textMesh;
-		public Image imageMesh;
+		public GameObject imageContainer;
+		public Image receiverBubbleImage;
+		public Image senderBubbleImage;
+
+		private RectTransform _imageContainerRt;
+		private CanvasGroup _imageContainerCg;
 
 		// The Y-offset to render at and to move from
 		public float offset = 0f;
@@ -51,32 +56,36 @@ namespace Heart
 		{
 			_self = gameObject.GetComponent<RectTransform>();
 			_messaging = gameObject.GetComponentInParent<TextMessaging>();
+			_imageContainerCg = imageContainer.GetComponent<CanvasGroup>();
+			_imageContainerRt = imageContainer.GetComponent<RectTransform>();
 			textMesh.text = text;
 			
 			if (speaker == Speaker.Receiver)
 			{
-				imageMesh.color = Color.gray;
+				receiverBubbleImage.enabled = true;
+				senderBubbleImage.enabled = false;
 				_self.pivot = new Vector2(0, 1);
 				_self.anchorMin = new Vector2(0, 1);
 				_self.anchorMax = new Vector2(0, 1);
 				_self.localPosition += new Vector3(16, 0, 0);
-				imageMesh.rectTransform.pivot = new Vector2(0, 1);
-				imageMesh.rectTransform.anchorMin = new Vector2(0, 1);
-				imageMesh.rectTransform.anchorMax = new Vector2(0, 1);
+				_imageContainerRt.pivot = new Vector2(0, 1);
+				_imageContainerRt.anchorMin = new Vector2(0, 1);
+				_imageContainerRt.anchorMax = new Vector2(0, 1);
 				textMesh.rectTransform.pivot = new Vector2(0, 1);
 				textMesh.rectTransform.anchorMin = new Vector2(0, 1);
 				textMesh.rectTransform.anchorMax = new Vector2(0, 1);
 			}
 			else
 			{
-				imageMesh.color = Color.blue;
+				receiverBubbleImage.enabled = false;
+				senderBubbleImage.enabled = true;
 				_self.pivot = new Vector2(1, 1);
 				_self.anchorMin = new Vector2(1, 1);
 				_self.anchorMax = new Vector2(1, 1);
 				_self.localPosition += new Vector3(-16, 0, 0);
-				imageMesh.rectTransform.pivot = new Vector2(1, 1);
-				imageMesh.rectTransform.anchorMin = new Vector2(1, 1);
-				imageMesh.rectTransform.anchorMax = new Vector2(1, 1);
+				_imageContainerRt.pivot = new Vector2(1, 1);
+				_imageContainerRt.anchorMin = new Vector2(1, 1);
+				_imageContainerRt.anchorMax = new Vector2(1, 1);
 				textMesh.rectTransform.pivot = new Vector2(1, 1);
 				textMesh.rectTransform.anchorMin = new Vector2(1, 1);
 				textMesh.rectTransform.anchorMax = new Vector2(1, 1);
@@ -100,7 +109,7 @@ namespace Heart
 			if (!_doOnce)
 			{
 				// wait for load
-				if (imageMesh == null || imageMesh.rectTransform == null || textMesh == null || textMesh.rectTransform == null)
+				if (imageContainer == null || _imageContainerRt == null || textMesh == null || textMesh.rectTransform == null)
 				{
 					return;
 				}
@@ -165,14 +174,12 @@ namespace Heart
 
 		private void Hide()
 		{
-			textMesh.alpha = 0.0f;
-			imageMesh.color = new Color(imageMesh.color.r, imageMesh.color.g, imageMesh.color.b, 0);
+			_imageContainerCg.alpha = 0;
 		}
 
 		private void Reveal()
 		{
-			textMesh.alpha = 1.0f;
-			imageMesh.color = new Color(imageMesh.color.r, imageMesh.color.g, imageMesh.color.b, 1);
+			_imageContainerCg.alpha = 1;
 		}
 		
 		private IEnumerator WaitUntil(float seconds, Action lambda)
@@ -223,12 +230,12 @@ namespace Heart
 			// necessary for text bubbles on the right-side to anchor.
 			if (desiredWidth < maxWidth)
 			{
-				imageMesh.rectTransform.sizeDelta = new Vector2(desiredWidth + padding.x, desiredHeight + padding.y);
+				_imageContainerRt.sizeDelta = new Vector2(desiredWidth + padding.x, desiredHeight + padding.y);
 				textMesh.rectTransform.sizeDelta = new Vector2(desiredWidth, desiredHeight);
 			}
 			else
 			{
-				imageMesh.rectTransform.sizeDelta = new Vector2(maxWidth + padding.x, desiredHeight + padding.y);
+				_imageContainerRt.sizeDelta = new Vector2(maxWidth + padding.x, desiredHeight + padding.y);
 				textMesh.rectTransform.sizeDelta = new Vector2(maxWidth, desiredHeight);
 			}
 		}
@@ -243,6 +250,11 @@ namespace Heart
 			return _self;
 		}
 
+		public RectTransform GetImageRectTransform()
+		{
+			return _imageContainerRt;
+		}
+
 		public float RenderedHeight()
 		{
 			// if height == 40...
@@ -251,7 +263,7 @@ namespace Heart
 			// 780 - 800 => 40 -- 20 => 60
 			// if < 0; 0; else min(height, difference)
 
-			var height = padding.y + imageMesh.rectTransform.rect.height;
+			var height = padding.y + _imageContainerRt.rect.height;
 			var yDiff = height - (_self.localPosition.y - moveFromOffset);
 			
 			if (yDiff <= 0)
