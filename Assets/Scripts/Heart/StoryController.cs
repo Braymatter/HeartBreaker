@@ -9,6 +9,7 @@ using Random = System.Random;
 
 public class StoryController : MonoBehaviour
 {
+    private Stack<String> levels = new Stack<String>(new [] {"Intro", "DemoLevel", "HardLevel" });
     // the ink story
     public TextAsset inkJSONAsset = null;
     
@@ -129,7 +130,15 @@ public class StoryController : MonoBehaviour
                 StartCoroutine(WaitUntil(3, () =>
                 {
                     RefreshView();
-                    _gameManager.SwitchToBreaker("");
+                    String level = null;
+                    if (levels.Count > 0){
+                        level = levels.Pop();
+                    }
+                    if(level == null)
+                    {
+                        level = "HardLevel";
+                    }
+                    _gameManager.SwitchToBreaker(level);
                 }));
             }); 
         }

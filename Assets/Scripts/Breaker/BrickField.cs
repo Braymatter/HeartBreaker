@@ -80,11 +80,13 @@ public class BrickField : MonoBehaviour
     {
         if (FieldData != null)
         {
-            foreach (var go in FieldData)
+            for(var i = FieldData.Count - 1; i >= 0; i--)
             {
+                var go = FieldData[i];
                 if (go != null)
                 {
                     Destroy(go);
+                    FieldData.Remove(go);
                 }
             }
         }

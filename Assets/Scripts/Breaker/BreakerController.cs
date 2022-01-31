@@ -21,7 +21,7 @@ public class BreakerController : MonoBehaviour
     private const String ABILITY_TWO = "AB2";
     private const String ABILITY_THREE = "AB3";
     private const String ABILITY_FOUR = "AB4";
-
+    
     private Dictionary<String, KeyCode> StringKeyCodes = new Dictionary<string, KeyCode>()
     {
         {"A", KeyCode.A},
@@ -147,6 +147,11 @@ public class BreakerController : MonoBehaviour
 
     public void Update()
     {
+        if (Input.GetKeyDown(KeyCode.W))
+        {
+            GameObject.FindObjectOfType<BrickField>().ClearField();
+        }
+        
         HandlePlayerInputs();
 
         HandleGameState();
@@ -186,6 +191,7 @@ public class BreakerController : MonoBehaviour
         brickField.levelName = level;
         brickField.SpawnField();
         controllerState = PLAYING;
+        GameObject.FindObjectOfType<BreakerBall>().direction = new Vector3(1,1,0);
     }
     public void HandleGameState()
     {
@@ -198,6 +204,11 @@ public class BreakerController : MonoBehaviour
             if (brickField.IsEmpty() && this.controllerState == PLAYING)
             {
                 this.controllerState = WON;
+                BreakerBall ball = GetComponentInChildren<BreakerBall>();
+                ball.WinState();
+                paddleGameObject.GetComponent<BreakerPaddle>().transform.position = _initialPaddlePosition;
+            }else if (this.controllerState == WON)
+            {
                 if (VictorySound != null)
                 {
                     SoundPlayer.clip = VictorySound;
@@ -205,10 +216,12 @@ public class BreakerController : MonoBehaviour
                     SoundPlayer.Play();
                 }
 
-                BreakerBall ball = GetComponentInChildren<BreakerBall>();
-                ball.WinState();
-                paddleGameObject.GetComponent<BreakerPaddle>().transform.position = _initialPaddlePosition;
-            }
+
+                GameObject.FindObjectOfType<GameManager>().SwitchToSMS();
+                
+
+            } 
+            
         }
     }
 

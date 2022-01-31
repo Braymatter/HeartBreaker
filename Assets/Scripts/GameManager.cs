@@ -23,23 +23,26 @@ public class GameManager : MonoBehaviour
         breakerGame.SetActive(true);
 
         smsGame.NewGame();
-        
-        Test();
     }
     
     public void SwitchToSMS()
     {
         Debug.Log("Switching to SMS");
+        breakerGame.GetComponent<BreakerController>().gameObject.SetActive(false);
         //smsGame.Play();
         SwitchToSMSView();
     }
 
     public void SwitchToBreaker(String levelName)
     {
+        BreakerController controller = breakerGame.GetComponent<BreakerController>();
+        controller.gameObject.SetActive(true);
         breakerMusic.playOnAwake = false;
         breakerMusic.time = 0;
         breakerMusic.Play();
-        breakerGame.GetComponent<BreakerController>().BeginNewGame(levelName);
+        
+        controller.BeginNewGame(levelName);
+        
         SwitchToBreakerView();
     }
 
@@ -53,7 +56,7 @@ public class GameManager : MonoBehaviour
     {
         player.url = System.IO.Path.Combine (Application.streamingAssetsPath,"Spacey BG.mp4");
         player.Play();
-        SwitchToBreaker("DemoLevel");
+        SwitchToBreaker("IntroLevel");
     }
 
     private void OnDisable()
