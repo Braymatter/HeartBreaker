@@ -9,7 +9,7 @@ using Random = System.Random;
 
 public class StoryController : MonoBehaviour
 {
-    private Stack<String> levels = new Stack<String>(new [] {"Intro", "DemoLevel", "HardLevel" });
+    private Stack<String> levels = new Stack<String>(new [] {"IntroLevel", "DemoLevel", "HardLevel" });
     // the ink story
     public TextAsset inkJSONAsset = null;
     
